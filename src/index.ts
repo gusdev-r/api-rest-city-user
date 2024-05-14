@@ -1,3 +1,6 @@
 import { server } from "./server/Server";
+import dotenv from 'dotenv'
 
-server.listen(8083, () => console.log("Application working fine!"));
+dotenv.config();
+// Use 8080 as a default port instead 'process.env.PORT'
+server.listen(process.env.PORT, () => console.log("Application working fine!"));

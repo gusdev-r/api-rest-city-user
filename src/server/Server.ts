@@ -1,9 +1,14 @@
 import express from "express";
+import { router } from "./routes";
+
+import './shared/service/TranslateYup';
+
 
 const server = express();
 
-server.get("/", (request, response) => {
-  return response.send("Hello world!");
-});
+server.use(express.json());
+
+server.use(router);
+
 
 export { server };
