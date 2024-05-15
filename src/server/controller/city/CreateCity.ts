@@ -1,4 +1,4 @@
-import { Request, RequestHandler, Response, request, response } from "express";
+import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as yup from "yup";
 import  {paramValidator } from "../../shared/middleware";
@@ -17,12 +17,9 @@ export const createValidation = paramValidator((getSchema) => ({
   ),
 }));
 
-// export const validateBodyToCreate = validation.paramValidator(createValidation);
-
-export const create = async (
+export const createCity = async (
   request: Request<{}, {}, CityDto>,
-  response: Response
-) => {
+  response: Response) => {
 
 console.log(request.body);
 return response.send("Created! - CreateRequest");
