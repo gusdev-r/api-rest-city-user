@@ -9,7 +9,7 @@ interface QueryProps {
   filter?: string;
 }
 
-export const getAllValidation = paramValidator((getSchema) => ({
+export const getAllCitiesValidation = paramValidator((getSchema) => ({
   query: getSchema<QueryProps>(
     yup.object().shape({
       page: yup.number().optional().moreThan(0),
@@ -22,4 +22,5 @@ export const getAllValidation = paramValidator((getSchema) => ({
 export const getAllCities = async (
   request : Request<{}, {}, {}, QueryProps>,
   response: Response) => {
+
 }

@@ -8,7 +8,7 @@ interface CityDto {
   state: string;
 }
 
-export const createValidation = paramValidator((getSchema) => ({
+export const createCityValidation = paramValidator((getSchema) => ({
   body: getSchema<CityDto>(
     yup.object().shape({
       name: yup.string().required().min(3),
