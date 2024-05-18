@@ -1,26 +1,37 @@
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as yup from "yup";
-import  {paramValidator } from "../../shared/middleware";
+import { paramValidator } from "../../shared/middleware";
+import { CityModel } from "../../models/City";
+import { CityProvider } from "../../database/provider/city";
 
-interface CityDto {
-  name: string;
-  state: string;
+interface CityModelExtends extends Omit<CityModel, "id"> {
+  fullName: string;
 }
 
 export const createCityValidation = paramValidator((getSchema) => ({
-  body: getSchema<CityDto>(
+  body: getSchema<CityModelExtends>(
     yup.object().shape({
-      name: yup.string().required().min(3),
-      state: yup.string().required().min(2),
+      fullName: yup.string().required().min(3).max(150),
     })
   ),
 }));
 
 export const createCity = async (
-  request: Request<{}, {}, CityDto>,
+  request: Request<{}, {}, CityModelExtends>,
   response: Response) => {
 
-console.log(request.body);
-return response.send("Created! - CreateRequest");
+  const resultCityCreated = await CityProvider.create(request.body);
+
+  if (resultCityCreated instanceof Error) {
+    return response
+    .status(StatusCodes.INTERNAL_SERVER_ERROR)
+    .json({
+      errors: {
+        default: resultCityCreated.message
+      }
+    })
+  }
+return response.status(StatusCodes.CREATED)
+  .json(resultCityCreated);
 }
