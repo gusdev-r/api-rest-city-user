@@ -6,11 +6,15 @@ export const getById = async (id: number): Promise<CityModel | Error> => {
   try {
     const result = await Knex(TablesNames.city)
     .select("*")
-    .where("id", "=", id)
+    .where("id", "=", Number(id))
     .first();
 
+
+    console.log("inside the provider")
+    console.log(result)
+
     if (result) return result;
-    
+
     return new Error("The object searched was not found in the system.");
   } catch (error) {
     console.log(error);

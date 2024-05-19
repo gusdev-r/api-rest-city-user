@@ -6,7 +6,7 @@ import { CityController, urlCityController } from "./../controller";
 
 const router = Router();
 
-router.get("/", (request, response) => {
+router.get("/", (_, response) => {
   return response.send("Hello world!");
 });
 

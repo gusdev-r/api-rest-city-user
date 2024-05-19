@@ -3,31 +3,50 @@ import { Request, Response } from "express";
 import { paramValidator } from "../../shared/middleware";
 import * as yup from "yup";
 import { CityModel } from "../../models/City";
+import { StatusCodes } from "http-status-codes";
+import { CityProvider } from "../../database/provider/city";
 
-interface RequestParams {
-  id: number;
+interface ParamProperty { 
+  id?: number;
 }
 
 interface CityModelExtends extends Omit<CityModel, "id"> {
-  fullName: string;
+  name: string;
 }
 
 export const updateCityByIdValidation = paramValidator((getSchema) => ({
-  params: getSchema<RequestParams>(
+  params: getSchema<ParamProperty>(
     yup.object().shape({
       id: yup.number().integer().required().moreThan(0),
     })
   ),
   body: getSchema<CityModelExtends>(
     yup.object().shape({
-      fullName: yup.string().required().min(3),
+      name: yup.string().required().min(3),
     })
   ),
 }));
 
 export const updateCityById = async (
-  request: Request<CityModelExtends>,
+  request: Request<ParamProperty>,
   response: Response) => {
 
-    return "";
+
+    if (!request.params.id) {
+      return response.status(StatusCodes.BAD_REQUEST).json({
+        errors: {
+          default: "The id is a required field"
+        } 
+      });
+    }
+    const result = CityProvider.updateById(request.params.id, request.body);
+    if (result instanceof Error) {
+      return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        errors: {
+          default: result.message
+        }
+      });
+    }
+
+    return response.status(StatusCodes.NO_CONTENT).json(result);
 }

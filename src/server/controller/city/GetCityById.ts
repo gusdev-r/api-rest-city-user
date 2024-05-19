@@ -1,4 +1,3 @@
-
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import * as yup from "yup";
@@ -26,15 +25,17 @@ export const getCityById = async (
         errors: {
           default: "The id is a required field"
         }
-      })
+      });
     }
-    const result = CityProvider.getById(request.params.id);
+
+    const result = await CityProvider.getById(request.params.id);
+    console.log(CityProvider.getById(request.params.id));
     if (result instanceof Error) {
       return response.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         errors: {
           default: result.message
         }
-      })
+      });
     }
 
     return response.status(StatusCodes.OK).json(result);

@@ -6,13 +6,13 @@ import { CityModel } from "../../models/City";
 import { CityProvider } from "../../database/provider/city";
 
 interface CityModelExtends extends Omit<CityModel, "id"> {
-  fullName: string;
+  name: string;
 }
 
 export const createCityValidation = paramValidator((getSchema) => ({
   body: getSchema<CityModelExtends>(
     yup.object().shape({
-      fullName: yup.string().required().min(3).max(150),
+      name: yup.string().required().min(3).max(150),
     })
   ),
 }));

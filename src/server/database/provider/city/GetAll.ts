@@ -6,8 +6,8 @@ export const getAll = async (page: number, limit: number, filter: string, id: nu
   try {
     const result = await Knex(TablesNames.city)
     .select("*")
-    .where("id", id)
-    .orWhere("fullName", "like", `%${filter}%`)
+    .where("id", Number(id))
+    .orWhere("name", "like", `%${filter}%`)
     .offset((page - 1) * limit)
     .limit(limit);
 
