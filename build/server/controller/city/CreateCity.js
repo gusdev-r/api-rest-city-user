@@ -36,14 +36,24 @@ exports.createCity = exports.createCityValidation = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const yup = __importStar(require("yup"));
 const middleware_1 = require("../../shared/middleware");
+const city_1 = require("../../database/provider/city");
 exports.createCityValidation = (0, middleware_1.paramValidator)((getSchema) => ({
     body: getSchema(yup.object().shape({
-        fullName: yup.string().required().min(3),
-        state: yup.string().required().min(2),
+        name: yup.string().required().min(3).max(150),
     })),
 }));
 const createCity = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(request.body);
-    return response.status(http_status_codes_1.StatusCodes.CREATED).send("Created! - CreateRequest");
+    const resultCityCreated = yield city_1.CityProvider.create(request.body);
+    if (resultCityCreated instanceof Error) {
+        return response
+            .status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({
+            errors: {
+                default: resultCityCreated.message
+            }
+        });
+    }
+    return response.status(http_status_codes_1.StatusCodes.CREATED)
+        .json(resultCityCreated);
 });
 exports.createCity = createCity;

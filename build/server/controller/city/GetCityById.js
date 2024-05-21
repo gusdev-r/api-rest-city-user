@@ -33,14 +33,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCityById = exports.getCityByIdValidation = void 0;
-const middleware_1 = require("../../shared/middleware");
+const http_status_codes_1 = require("http-status-codes");
 const yup = __importStar(require("yup"));
+const city_1 = require("../../database/provider/city");
+const middleware_1 = require("../../shared/middleware");
 exports.getCityByIdValidation = (0, middleware_1.paramValidator)(getSchema => ({
     params: getSchema(yup.object().shape({
         id: yup.number().integer().required().moreThan(0),
     })),
 }));
 const getCityById = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    return "";
+    if (!request.params.id) {
+        return response.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({
+            errors: {
+                default: "The id is a required field"
+            }
+        });
+    }
+    const result = yield city_1.CityProvider.getById(request.params.id);
+    console.log(city_1.CityProvider.getById(request.params.id));
+    if (result instanceof Error) {
+        return response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
+            errors: {
+                default: result.message
+            }
+        });
+    }
+    return response.status(http_status_codes_1.StatusCodes.OK).json(result);
 });
 exports.getCityById = getCityById;

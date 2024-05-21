@@ -35,12 +35,30 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCityById = exports.deleteCityByIdValidation = void 0;
 const middleware_1 = require("../../shared/middleware");
 const yup = __importStar(require("yup"));
+const http_status_codes_1 = require("http-status-codes");
+const city_1 = require("../../database/provider/city");
 exports.deleteCityByIdValidation = (0, middleware_1.paramValidator)((getSchema) => ({
     params: getSchema(yup.object().shape({
         id: yup.number().required().moreThan(0),
     })),
 }));
 const deleteCityById = (request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    return "";
+    if (!request.params.id)
+        return response.status(http_status_codes_1.StatusCodes.BAD_REQUEST).json({
+            errors: {
+                default: "The id is a required field"
+            }
+        });
+    const result = yield city_1.CityProvider.deleteById(request.params.id);
+    if (result instanceof Error) {
+        return response.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).json({
+            errors: {
+                default: result.message
+            }
+        });
+    }
+    return response
+        .status(http_status_codes_1.StatusCodes.NO_CONTENT)
+        .send(`The city with id ${request.params.id} was deleted`);
 });
 exports.deleteCityById = deleteCityById;
